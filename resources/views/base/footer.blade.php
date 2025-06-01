@@ -23,7 +23,7 @@
       <p class="mt-3">
         <a href="/aboutUs" class="hover:text-gray-500">Get Location</a>
       </p>
-      <a href="mailto:tansenautowerks@gmail.com" class="mt-1 hover:text-gray-500">📧 tansenautowerks@gmail.com</a><br>
+      <a href="mailto:uppk@gmail.com" class="mt-1 hover:text-gray-500">📧 tansenautowerks@gmail.com</a><br>
       <a href="tel:+6282143392878" class="mt-1 hover:text-gray-500">📞 +62 821 4339 2878</a>
     </div>
   </div>
