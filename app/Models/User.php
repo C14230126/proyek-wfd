@@ -17,11 +17,24 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    protected $table = 'users';
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'name', 'nrp', 'jurusan', 'nip', 'email', 'password', 'no_hp', 'status'
     ];
+        public function role()
+    {
+        return $this->hasOne(Roles::class);
+    }
+
+    public function peminjaman()
+    {
+        return $this->hasMany(Peminjaman::class);
+    }
+
+    public function peminjamanAdmin()
+    {
+        return $this->hasMany(Peminjaman::class, 'admin_id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
