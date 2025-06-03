@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('barangs', function (Blueprint $table) {
             $table->id('barang_id');
-            $table->foreignId('kategori_id')->nullable()->constrained('kategori')->onDelete('set null');
+            $table->unsignedBigInteger('kategori_id')->nullable();
+            $table->foreign('kategori_id')->references('kategori_id')->on('kategori')->onDelete('set null');
             $table->string('item', 255);
             $table->integer('jumlah_unit');
             $table->string('lokasi', 255)->nullable(); // barang ini di uppk mana

@@ -27,8 +27,10 @@
       <a href="tel:+6282143392878" class="mt-1 hover:text-gray-500">📞 +62 821 4339 2878</a>
     </div>
   </div>
-
+  
   <div class="text-center text-gray-500 text-sm mt-8 border-t pt-4">
     © 2025 UPPK Petra Christian University. All Rights Reserved.
   </div>
 </footer>
+
+
