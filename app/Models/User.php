@@ -19,11 +19,18 @@ class User extends Authenticatable
      */
     protected $table = 'users';
     protected $fillable = [
-        'name', 'nrp', 'jurusan', 'nip', 'email', 'password', 'no_hp', 'status'
+        'name',
+        'nrp',
+        'jurusan',
+        'nip',
+        'email',
+        'password',
+        'no_hp',
+        'status'
     ];
-        public function role()
+    public function role()
     {
-        return $this->hasOne(Roles::class);
+        return $this->hasMany(Roles::class);
     }
 
     public function peminjaman()
