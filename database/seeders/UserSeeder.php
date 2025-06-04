@@ -17,6 +17,7 @@ class UserSeeder extends Seeder
         // Admin
         User::create([
             'name' => 'admin',
+            'nip' => '1234567890',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('admin'),
             'no_hp' => '081234567890',
@@ -26,6 +27,7 @@ class UserSeeder extends Seeder
         // Mahasiswa
         User::create([
             'name' => 'juan',
+            'nrp' => '11111111',
             'email' => 'juan@gmail.com',
             'password' => Hash::make('juan'),
             'no_hp' => '081234567891',
@@ -34,6 +36,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'arya',
+            'nrp' => '22222222',
             'email' => 'arya@gmail.com',
             'password' => Hash::make('arya'),
             'no_hp' => '081234567892',
@@ -42,6 +45,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'darrel',
+            'nrp' => '33333333',
             'email' => 'darrel@gmail.com',
             'password' => Hash::make('darrel'),
             'no_hp' => '081234567893',
@@ -50,6 +54,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'joshua',
+            'nrp' => '44444444',
             'email' => 'joshua@gmail.com',
             'password' => Hash::make('joshua'),
             'no_hp' => '081234567894',
@@ -58,6 +63,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'reynard',
+            'nrp' => '55555555',
             'email' => 'reynard@gmail.com',
             'password' => Hash::make('reynard'),
             'no_hp' => '081234567895',
@@ -66,6 +72,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'valentino',
+            'nrp' => '66666666',
             'email' => 'valentino@gmail.com',
             'password' => Hash::make('valentino'),
             'no_hp' => '081234567896',
