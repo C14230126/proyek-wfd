@@ -15,6 +15,19 @@
     </div>
 
     <div class="w-[64px]"></div>
+    <!-- Jika user SUDAH LOGIN -->
+    @auth
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="text-white">Logout</button>
+        </form>
+    @endauth
+
+    <!-- Jika user BELUM LOGIN -->
+    @guest
+        <a href="{{ route('login') }}" class="text-white">Sign In</a>
+    @endguest
+
   </div>
 
   @php
@@ -23,6 +36,7 @@
 
   {{-- Tampilkan navbar kecuali di halaman login dan register --}}
   @if (!in_array($currentRoute, ['login', 'register']))
+
     <nav class="absolute bottom-[-40px] left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-md px-8 py-4 w-full max-w-[1200px] z-10">
       <div class="flex justify-between items-center text-base font-medium w-full">
         @if ($currentRoute === 'listpeminjaman.index')

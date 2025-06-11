@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+<form method="POST" action="{{ route('login.post') }}">
+    @csrf
+
 <div class="min-h-screen flex items-center justify-center">
   <div class="backdrop-blur-sm bg-white/90 rounded-2xl shadow-lg p-12 w-full max-w-2xl mt-10 min-h-[500px] flex flex-col justify-center">
     <h2 class="text-3xl font-bold text-left text-[#193048] mb-8">Login</h2>
@@ -22,6 +25,10 @@
         Login
       </button>
     </form>
+
+    <div class="mt-6 text-center">
+      <p class="text-sm text-gray-600">Belum punya akun? <a href="/register" class="text-[#3B9BC8] hover:underline">Daftar di sini</a></p>
   </div>
 </div>
+</form>
 @endsection

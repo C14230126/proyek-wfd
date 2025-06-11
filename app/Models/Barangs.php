@@ -15,8 +15,15 @@ class Barangs extends Model
         return $this->belongsTo(Kategori::class);
     }
 
+    // public function peminjamans()
+    // {
+    //     return $this->hasMany(Peminjaman::class);
+    // }
     public function peminjamans()
     {
-        return $this->hasMany(Peminjaman::class);
+        return $this->belongsToMany(Peminjaman::class, 'peminjaman_new_details')
+                    ->withPivot('jumlah')
+                    ->withTimestamps();
     }
+
 }

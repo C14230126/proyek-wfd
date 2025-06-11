@@ -1,8 +1,21 @@
 @extends('layouts.app')
 
+
 @section('content')
+@if (session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Oke'
+        });
+    </script>
+@endif
+
 <div class="min-h-screen flex justify-center items-center px-4">
-  <form action="#" method="POST" class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8 w-full max-w-5xl">
+  <form action="{{ route('listpeminjaman.store') }}" method="POST" class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8 w-full max-w-5xl">
     @csrf
     <h2 class="text-2xl font-bold text-[#193048] mb-6">Form Peminjaman</h2>
 
@@ -11,27 +24,31 @@
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Acara</label>
-          <input type="text" name="nama_acara" class="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none">
+          <input required type="text" name="nama_acara" class="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none">
         </div>
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Peminjam</label>
-          <input type="text" name="nama_peminjam" class="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Lokasi Acara</label>
+          <input required type="text" name="lokasi_acara" class="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none">
         </div>
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-1">NRP</label>
-          <input type="text" name="nrp" class="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Peminjaman Awal</label>
+          <input required  type="date" name="tanggal_pinjam" class="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Peminjaman Akhir</label>
+          <input required  type="date" name="tanggal_kembali" class="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none">
         </div>
       </div>
 
       <!-- Tengah -->
       <div class="space-y-4">
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Pinjam</label>
-          <input type="date" name="tanggal_pinjam" class="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Awal Jam Pinjam</label>
+          <input required  type="time" name="awal_jam_pinjem" class="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none">
         </div>
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-1">Waktu Pengembalian</label>
-          <input type="date" name="tanggal_kembali" class="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none">
+          <label class="block text-sm font-semibold text-gray-700 mb-1">Akhir Jam Pinjam</label>
+          <input required  type="time" name="akhir_jam_pinjem" class="w-full px-4 py-2 rounded bg-gray-100 focus:outline-none">
         </div>
       </div>
 
@@ -48,14 +65,14 @@
           <tbody id="barang-list">
             <tr>
               <td class="border p-1">
-                <select name="barang_id[]" class="w-full bg-white rounded px-2 py-1 border">
+                <select name="barang_id[]" required class="w-full bg-white rounded px-2 py-1 border">
                   @foreach ($barangs as $barang)
                     <option value="{{ $barang->id }}">{{ $barang->item }}</option>
                   @endforeach
                 </select>
               </td>
               <td class="border p-1">
-                <input type="number" name="jumlah[]" min="1" class="w-full px-2 py-1 rounded bg-gray-100">
+                <input type="number" name="jumlah[]" required min="1" class="w-full px-2 py-1 rounded bg-gray-100">
               </td>
             </tr>
           </tbody>
@@ -78,17 +95,29 @@
     const row = `
     <tr>
       <td class="border p-1">
-        <select name="barang_id[]" class="w-full bg-white rounded px-2 py-1 border">
+        <select name="barang_id[]" required  class="w-full bg-white rounded px-2 py-1 border">
           @foreach ($barangs as $barang)
             <option value="{{ $barang->id }}">{{ $barang->item }}</option>
           @endforeach
         </select>
       </td>
       <td class="border p-1">
-        <input type="number" name="jumlah[]" min="1" class="w-full px-2 py-1 rounded bg-gray-100">
+        <input type="number" name="jumlah[]" required  min="1" class="w-full px-2 py-1 rounded bg-gray-100">
       </td>
     </tr>`;
     document.getElementById('barang-list').insertAdjacentHTML('beforeend', row);
   }
 </script>
+@if (session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Oke'
+        });
+    </script>
+@endif
+
 @endsection
