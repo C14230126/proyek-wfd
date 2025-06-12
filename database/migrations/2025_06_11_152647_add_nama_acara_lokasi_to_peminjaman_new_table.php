@@ -8,9 +8,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('peminjaman_new', function (Blueprint $table) {
+            if (!Schema::hasColumn('peminjaman_new', 'nama_acara')) {
             $table->string('nama_acara')->after('user_id');
             $table->string('lokasi_acara')->after('nama_acara');
             $table->date('tanggal_kembali')->nullable(false)->change(); // Ubah jadi NOT NULL
+            }
         });
     }
 

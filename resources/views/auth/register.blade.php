@@ -4,10 +4,8 @@
 <div class="min-h-screen flex items-center justify-center">
   <div class="backdrop-blur-sm bg-white/90 rounded-2xl shadow-lg p-10 w-full max-w-4xl mt-10">
     <h2 class="text-3xl font-bold text-left text-[#193048] mb-8">Register</h2>
-
-    <form action="/register" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+    <form action="{{ route('register.post') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
       @csrf
-
       <!-- Nama -->
       <div>
         <label class="block font-semibold text-gray-700 mb-1">Nama</label>
@@ -31,6 +29,12 @@
         <label class="block font-semibold text-gray-700 mb-1">Jurusan</label>
         <input type="text" name="jurusan" class="w-full px-4 py-3 rounded-2xl bg-gray-100 focus:outline-none" value="Jurusan" readonly>
         <p class="text-xs text-gray-500 mt-1">*Note: Jurusan akan terisi otomatis berdasarkan NRP</p>
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="block font-semibold text-gray-700 mb-1">Email</label>
+        <input type="email" name="email" class="w-full px-4 py-3 bg-gray-100 rounded-2xl focus:outline-none" placeholder="email@example.com">
       </div>
 
       <!-- Password -->

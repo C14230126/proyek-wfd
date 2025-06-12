@@ -14,6 +14,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'authenticate'])->name('login.post');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/register', [AuthController::class, 'handleRegister'])->name('register.post');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 // ✅ Routes hanya untuk user login
@@ -29,7 +30,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/peminjaman/{id}/detail', [PeminjamanNewDetailController::class, 'store'])->name('peminjaman.detail.store');
 
     // ✅ Barang dan lainnya
-    Route::get('/list-barang', [BarangController::class, 'index'])->name('listbarang.index');
+    Route::get('/listbarang', [BarangController::class, 'index'])->name('listbarang.index');
+    Route::post('/listbarang', [BarangController::class, 'store'])->name('listbarang.store');
+    Route::put('/listbarang/{id}', [BarangController::class, 'update'])->name('listbarang.update');
     Route::get('/listusers', [UserController::class, 'index'])->name('listusers.index');
     Route::get('/pengajuan', [PengajuanController::class, 'index'])->name('pengajuan');
 });
