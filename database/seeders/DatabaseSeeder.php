@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             BarangsSeeder::class,
             UserSeeder::class,
             RolesSeeder::class,
+            PeminjamanNewSeeder::class,
+            PeminjamanNewDetailSeeder::class,
         ]);
     }
 }
