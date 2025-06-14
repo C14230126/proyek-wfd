@@ -23,11 +23,46 @@ class PeminjamanNewController extends Controller
         $prev = $current->copy()->subMonth();
         $next = $current->copy()->addMonth();
 
-        $startOfMonth = Carbon::create($tahun, $bulan, 1);
+        $startOfMonth = Carbon::create($tahun, $bulan, 1)->startOfDay();
+        $endOfMonth = Carbon::create($tahun, $bulan, 1)->endOfMonth()->endOfDay();
+
         $daysInMonth = $startOfMonth->daysInMonth;
         $firstDayOfWeek = $startOfMonth->dayOfWeek; // 0 = Sunday
 
-        $peminjaman = PeminjamanNew::with('details.barang')->get();
+        // Ambil semua peminjaman yang overlapping dengan bulan yang sedang dilihat
+        $allPeminjamanInMonth = PeminjamanNew::where(function ($query) use ($startOfMonth, $endOfMonth) {
+                $query->whereBetween('tanggal_pinjam', [$startOfMonth, $endOfMonth])
+                      ->orWhereBetween('tanggal_kembali', [$startOfMonth, $endOfMonth])
+                      ->orWhere(function ($query) use ($startOfMonth, $endOfMonth) {
+                          $query->where('tanggal_pinjam', '<', $startOfMonth)
+                                ->where('tanggal_kembali', '>', $endOfMonth);
+                      });
+            })
+            ->get();
+
+        // Siapkan array untuk menandai tanggal-tanggal yang memiliki peminjaman
+        $datesWithPeminjaman = [];
+        // Siapkan array untuk menandai tanggal-tanggal dengan peminjaman yang belum dikembalikan
+        $datesWithUnreturned = [];
+
+        $today = Carbon::today()->startOfDay(); // Dapatkan hari ini
+
+        foreach ($allPeminjamanInMonth as $peminjaman) {
+            $startDate = Carbon::parse($peminjaman->tanggal_pinjam);
+            $endDate = Carbon::parse($peminjaman->tanggal_kembali);
+
+            for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+                if ($date->month == $bulan && $date->year == $tahun) {
+                    $dateString = $date->format('Y-m-d');
+                    $datesWithPeminjaman[$dateString] = true;
+
+                    // Jika status bukan 'selesai' DAN tanggal_kembali sudah lewat hari ini
+                    if ($peminjaman->status !== 'selesai' && $endDate->lt($today)) {
+                        $datesWithUnreturned[$dateString] = true;
+                    }
+                }
+            }
+        }
 
         return view('listpeminjaman', compact(
             'bulan',
@@ -36,7 +71,9 @@ class PeminjamanNewController extends Controller
             'firstDayOfWeek',
             'prev',
             'next',
-            'current'
+            'current',
+            'datesWithPeminjaman',
+            'datesWithUnreturned' // ✅ Kirim data ini ke Blade
         ));
     }
 
@@ -85,6 +122,7 @@ class PeminjamanNewController extends Controller
 
     public function getJadwalByTanggal(Request $request)
     {
+
         $tanggal = $request->tanggal;
         if ($tanggal == null) {
             Log::warning('getJadwalByTanggal: Tanggal tidak diberikan.', ['request_params' => $request->all()]);

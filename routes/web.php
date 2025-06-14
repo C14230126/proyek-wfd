@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/peminjaman', [PeminjamanNewController::class, 'index'])->name('listpeminjaman.index');
     Route::get('/peminjaman/{id}/detail', [PeminjamanNewDetailController::class, 'index'])->name('peminjaman.detail');
     Route::post('/peminjaman/{id}/detail', [PeminjamanNewDetailController::class, 'store'])->name('peminjaman.detail.store');
+    Route::get('/peminjaman/jadwal/{tanggal}', [PeminjamanNewController::class, 'getJadwalByTanggal']);
 
     // ✅ Barang dan lainnya
     Route::get('/listbarang', [BarangController::class, 'index'])->name('listbarang.index');
@@ -46,7 +47,6 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:mahasiswa')->group(function () {
         Route::get('/peminjaman/buat', [PeminjamanNewController::class, 'create'])->name('listpeminjaman.create');
         Route::post('/peminjaman/buat', [PeminjamanNewController::class, 'store'])->name('listpeminjaman.store');
-        Route::get('/peminjaman/jadwal/{tanggal}', [PeminjamanNewController::class, 'getJadwalByTanggal']);
     });
 });
 
