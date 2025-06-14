@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+
 <div class=" mt-70 font-bold text-white text-center mb-6">
     <h5 class="text-4xl">Welcome to</h5>
     <h1 class="text-9xl">UPPK Petra </h1>

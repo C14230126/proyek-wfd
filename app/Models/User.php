@@ -43,6 +43,21 @@ class User extends Authenticatable
         return $this->hasMany(Peminjaman::class, 'admin_id');
     }
 
+    public function hasRole(string $role): bool
+    {
+        return $this->role()->where('role', $role)->exists();
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    public function isMahasiswa(): bool
+    {
+        return $this->hasRole('mahasiswa');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
