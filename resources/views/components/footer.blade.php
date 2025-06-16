@@ -23,8 +23,9 @@
         $currentRoute = Route::currentRouteName();
     @endphp
 
-    @if (!in_array($currentRoute, ['login', 'register']))
-    <div class="flex justify-center items-center gap-4 mb-4">
+    @if (!Auth::check())
+      @if (!in_array($currentRoute, ['login', 'register']))
+        <div class="flex justify-center items-end gap-4 mb-4">
         <p class="m-0 text-sm">Register for free</p>
         <a href="{{ route('register') }}" class="border border-white px-6 py-2 rounded-full hover:bg-white hover:text-[#193048] transition text-sm">
         SIGN UP!
@@ -32,6 +33,8 @@
     </div>
     <div class="border-t border-gray-600 mt-10 pt-6 text-center">
     @endif
+    @endif
+    
 
     <!-- Social Icons -->
     <div class="flex justify-center mt-2 space-x-4 text-gray-400">

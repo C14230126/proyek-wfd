@@ -26,7 +26,7 @@
   </style>
 </head>
 
-<body class="bg-no-repeat bg-top bg-fixed min-h-screen" style="background-image: url('{{ asset('images/bg.webp') }}');">
+<body class="flex flex-col min-h-screen bg-no-repeat bg-top bg-fixed" style="background-image: url('{{ asset('images/bg.webp') }}');">
 
     <!-- Navbar -->
     <x-navbar />
