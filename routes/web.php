@@ -48,6 +48,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/peminjaman/buat', [PeminjamanNewController::class, 'create'])->name('listpeminjaman.create');
         Route::post('/peminjaman/buat', [PeminjamanNewController::class, 'store'])->name('listpeminjaman.store');
     });
+
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 });
 
 // use App\Http\Controllers\AuthController;
