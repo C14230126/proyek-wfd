@@ -30,7 +30,7 @@ class User extends Authenticatable
     ];
     public function role()
     {
-        return $this->hasMany(Roles::class);
+        return $this->hasOne(Roles::class);
     }
 
     public function peminjaman()
@@ -80,4 +80,5 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
 }
