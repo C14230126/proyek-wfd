@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\PeminjamanNew;
 use Illuminate\Http\Request;
 
 class PengajuanController extends Controller
@@ -14,17 +14,23 @@ class PengajuanController extends Controller
 
     public function approve($id)
     {
+         // Validasi hak akses admin
+        if (!auth()->user()->role || auth()->user()->role->role !== 'admin') {
+        abort(403);
+    }
         $pengajuan = PeminjamanNew::findOrFail($id);
-        $pengajuan->status = 'disetujui';
-        $pengajuan->save();
+         $pengajuan->update(['status' => 'disetujui']);
         return redirect()->route('pengajuan')->with('success', 'Pengajuan disetujui.');
     }
 
     public function decline($id)
     {
+         // Validasi hak akses admin
+        if (!auth()->user()->role || auth()->user()->role->role !== 'admin') {
+        abort(403);
+    }
         $pengajuan = PeminjamanNew::findOrFail($id);
-        $pengajuan->status = 'ditolak';
-        $pengajuan->save();
+        $pengajuan->update(['status' => 'ditolak']);
         return redirect()->route('pengajuan')->with('error', 'Pengajuan ditolak.');
     }
 
