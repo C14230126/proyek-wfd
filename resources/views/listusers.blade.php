@@ -27,7 +27,7 @@
                         </button>
                     @endif
                 </div>
-            @endif
+            
         @endforeach
     </div>
 
