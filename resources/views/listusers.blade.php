@@ -25,9 +25,9 @@
                                 class="flex items-center space-x-2 text-sm text-red-600 bg-white rounded-full px-3 py-1 hover:bg-red-100 transition">
                             <span>Hapus</span>
                         </button>
-                    @endif
+                   
                 </div>
-            
+              @endif
         @endforeach
     </div>
 
