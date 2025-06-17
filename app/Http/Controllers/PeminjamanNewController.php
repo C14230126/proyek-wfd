@@ -119,7 +119,6 @@ class PeminjamanNewController extends Controller
         return redirect()->back()->with('success', 'Peminjaman berhasil disimpan!');
     }
 
-
     public function getJadwalByTanggal(Request $request)
     {
 

@@ -39,19 +39,22 @@ Route::middleware('auth')->group(function () {
 
 
     // Routes untuk role admin dan mahasiswa
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/listusers', [UserController::class, 'index'])->name('listusers.index');
-        Route::get('/pengajuan', [PengajuanController::class, 'index'])->name('pengajuan');
         Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::get('/pengajuan', [PengajuanController::class, 'index'])->name('pengajuan');
+        Route::post('/pengajuan/{id}/approve', [PengajuanController::class, 'approve'])->name('pengajuan.approve');
+        Route::post('/pengajuan/{id}/decline', [PengajuanController::class, 'decline'])->name('pengajuan.decline');
+        Route::get('/pengajuan/{id}', [PengajuanController::class, 'show'])->name('pengajuan.show');
     });
+
+
 
     Route::middleware('role:mahasiswa')->group(function () {
         Route::get('/peminjaman/buat', [PeminjamanNewController::class, 'create'])->name('listpeminjaman.create');
         Route::post('/peminjaman/buat', [PeminjamanNewController::class, 'store'])->name('listpeminjaman.store');
     });
 
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 });
 
 // use App\Http\Controllers\AuthController;
