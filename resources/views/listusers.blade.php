@@ -14,17 +14,45 @@
                             <span>Waiting</span>
                         </div>
                     @else
-                        <form action="{{ route('users.destroy', $user->id) }}" method="POST">
+                        <form id="delete-user-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}" method="POST" style="display: none;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="flex items-center space-x-2 text-sm text-red-600 bg-white rounded-full px-3 py-1">
-                                <span>Hapus</span>
-                            </button>
                         </form>
+                        <button type="button"
+                                data-user-id="{{ $user->id }}"
+                                data-user-name="{{ $user->name }}"
+                                onclick="confirmDelete(this)"
+                                class="flex items-center space-x-2 text-sm text-red-600 bg-white rounded-full px-3 py-1 hover:bg-red-100 transition">
+                            <span>Hapus</span>
+                        </button>
                     @endif
                 </div>
             @endif
         @endforeach
     </div>
 </div>
+
+<script>
+    function confirmDelete(buttonElement) {
+        // Ambil data dari atribut data-* pada tombol yang diklik
+        const userId = buttonElement.dataset.userId;
+        const userName = buttonElement.dataset.userName;
+
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: `Anda tidak akan bisa mengembalikan user '${userName}' ini!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6', 
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                
+                document.getElementById('delete-user-' + userId).submit();
+            }
+        });
+    }
+</script>
 @endsection
