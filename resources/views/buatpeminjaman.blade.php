@@ -219,5 +219,36 @@
             input.classList.add('border', 'border-gray-300', 'focus:border-blue-500', 'focus:ring-1', 'focus:ring-blue-500');
         });
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Pastikan elemen ada
+    const tanggalPinjam = document.getElementById('tanggal_pinjam');
+    if (!tanggalPinjam) return;
+
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0];
+    
+    // Set min date
+    tanggalPinjam.min = todayString;
+    
+    tanggalPinjam.addEventListener('change', function() {
+        const selectedDate = new Date(this.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (selectedDate < today) {
+            // Gunakan Swal.fire bukan SweetAlert
+            Swal.fire({
+                icon: 'error',
+                title: 'Tanggal tidak valid',
+                text: 'Anda tidak bisa memilih tanggal yang sudah lewat',
+                confirmButtonText: 'Mengerti'
+            }).then(() => {
+                // Reset nilai setelah alert ditutup
+                this.value = todayString;
+            });
+        }
+    });
+});
 </script>
 @endsection
