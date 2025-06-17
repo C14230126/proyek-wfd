@@ -6,7 +6,9 @@
     </div>
 
     <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center space-x-4">
-      <img src="{{ asset('images/logo_pcu.webp') }}" alt="Logo Petra" class="h-12">
+      <a href="{{ url('/') }}">
+        <img src="{{ asset('images/logo_pcu.webp') }}" alt="Logo Petra" class="h-12 cursor-pointer">
+      </a>
       <div class="border-l border-[#42556b] h-10 mx-2"></div>
       <div class="text-white text-base leading-tight text-left">
         <div class="font-bold">UPPK</div>
