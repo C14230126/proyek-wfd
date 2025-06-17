@@ -20,7 +20,7 @@ class PeminjamanDetail extends Model
 
     public function peminjaman()
     {
-        return $this->belongsTo(Peminjaman::class);
+        return $this->belongsTo(PeminjamanNew::class);
     }
 
     public function barang()
