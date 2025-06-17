@@ -3,19 +3,6 @@
 @section('content')
 
 <div class="min-h-screen flex items-center justify-center">
-    @if (session('success'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '{{ session('success') }}',
-            showConfirmButton: false,
-            timer: 2000
-        });
-        });
-    </script>
-    @endif
     
   <form method="POST" action="{{ route('login.post') }}" class="backdrop-blur-sm bg-white/90 rounded-2xl shadow-lg p-12 w-full max-w-2xl mt-10 min-h-[500px] flex flex-col justify-center">
     @csrf

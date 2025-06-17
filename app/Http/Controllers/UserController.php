@@ -15,13 +15,14 @@ class UserController extends Controller
         $users = User::whereHas('role', function ($query) {
             $query->where('role', '!=', 'admin');
         })->with('role')->get();
-    
+
         return view('listusers', compact('users'));
     }
 
     public function destroy($id)
     {
         $user = \App\Models\User::findOrFail($id);
+        $userName = $user->name;
         $user->delete();
 
         return redirect()->route('listusers.index')->with('success', 'User berhasil dihapus.');

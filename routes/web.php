@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// ✅ Public routes (akses tanpa login)
+// Public routes (akses tanpa login)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/login', [AuthController::class, 'authenticate'])->name('login.post');
@@ -20,28 +20,29 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'handleRegister'])->name('register.post');
 });
 
-// ✅ Routes hanya untuk user login
+// Routes hanya untuk user login
 Route::middleware('auth')->group(function () {
 
-    // ✅ Detail Peminjaman (jika kamu ingin mengatur detail barang yg dipinjam)
+    // Detail Peminjaman (jika kamu ingin mengatur detail barang yg dipinjam)
     Route::get('/peminjaman', [PeminjamanNewController::class, 'index'])->name('listpeminjaman.index');
     Route::get('/peminjaman/{id}/detail', [PeminjamanNewDetailController::class, 'index'])->name('peminjaman.detail');
     Route::post('/peminjaman/{id}/detail', [PeminjamanNewDetailController::class, 'store'])->name('peminjaman.detail.store');
     Route::get('/peminjaman/jadwal/{tanggal}', [PeminjamanNewController::class, 'getJadwalByTanggal']);
 
-    // ✅ Barang dan lainnya
+    // Barang dan lainnya
     Route::get('/listbarang', [BarangController::class, 'index'])->name('listbarang.index');
     Route::post('/listbarang', [BarangController::class, 'store'])->name('listbarang.store');
     Route::put('/listbarang/{id}', [BarangController::class, 'update'])->name('listbarang.update');
 
-    // ✅ Logout
+    // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/listusers', [UserController::class, 'index'])->name('listusers.index');
 
-    // ✅ Routes untuk role admin dan mahasiswa
+    // Routes untuk role admin dan mahasiswa
     Route::middleware('role:admin')->group(function () {
         Route::get('/pengajuan', [PengajuanController::class, 'index'])->name('pengajuan');
+        Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 
     Route::middleware('role:mahasiswa')->group(function () {
@@ -61,7 +62,7 @@ Route::middleware('auth')->group(function () {
 // use App\Http\Controllers\PengajuanController;
 // use App\Http\Controllers\UserController;
 
-// // ✅ Public route (bisa diakses tanpa login)
+// // Public route (bisa diakses tanpa login)
 // Route::get('/', [HomeController::class, 'index'])->name('home');
 // Route::get('/login', [AuthController::class, 'login'])->name('login');
 // Route::post('/login', [AuthController::class, 'authenticate'])->name('login.post'); // Proses form login
@@ -70,7 +71,7 @@ Route::middleware('auth')->group(function () {
 // Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 
-// // ✅ Route yang hanya bisa diakses setelah login
+// // Route yang hanya bisa diakses setelah login
 // Route::middleware(['auth'])->group(function () {
 //     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('listpeminjaman.index');
 //     Route::get('/peminjaman/buat', [PeminjamanController::class, 'create'])->name('listpeminjaman.create');
