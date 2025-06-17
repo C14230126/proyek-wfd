@@ -37,15 +37,17 @@ Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    Route::get('/listusers', [UserController::class, 'index'])->name('listusers.index');
 
     // Routes untuk role admin dan mahasiswa
     Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/listusers', [UserController::class, 'index'])->name('listusers.index');
         Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
         Route::get('/pengajuan', [PengajuanController::class, 'index'])->name('pengajuan');
+        Route::get('/pengajuan/{id}', [PengajuanController::class, 'show'])->name('pengajuan.show');
         Route::post('/pengajuan/{id}/approve', [PengajuanController::class, 'approve'])->name('pengajuan.approve');
         Route::post('/pengajuan/{id}/decline', [PengajuanController::class, 'decline'])->name('pengajuan.decline');
-        Route::get('/pengajuan/{id}', [PengajuanController::class, 'show'])->name('pengajuan.show');
     });
 
 
