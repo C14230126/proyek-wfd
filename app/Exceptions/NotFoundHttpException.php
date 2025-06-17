@@ -29,13 +29,26 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        // Check if the exception is a 404 (NotFoundHttpException)
-        if ($exception instanceof NotFoundHttpException) {
-            return redirect()->route('login'); // Assuming your login route is named 'login'
-        }
+       $this->reportable(function (Throwable $e) {
+            // Ini untuk logging atau melaporkan pengecualian
+        });
 
-        // For all other exceptions, or if the user is authenticated,
-        // let the default handler process the response (e.g., show 404 page for authenticated users)
-        return parent::render($request, $exception);
+        // ✅ INI ADALAH CARA ANDA MEREGISTER LOGIKA CUSTOM HANDLER UNTUK LARAVEL 10+
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            // Periksa jika permintaan adalah API (misalnya, dari JavaScript frontend)
+
+            dd('Masuk ke NotFoundHttpException handler');
+
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Not Found. ' . ($e->getMessage() ?: 'Resource not found.'),
+                    'code' => 404
+                ], 404);
+            }
+
+            // Jika ini bukan permintaan API (misal, web biasa), lakukan redirect
+            // Hanya redirect ke login jika user belum login
+            return redirect()->route('login'); 
+        });
     }
 }

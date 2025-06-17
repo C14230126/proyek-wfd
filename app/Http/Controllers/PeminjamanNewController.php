@@ -96,6 +96,38 @@ class PeminjamanNewController extends Controller
             'daily_times' => 'required|array', // Pastikan daily_times adalah array
             'daily_times.*.start_time' => 'required|date_format:H:i', // Validasi format jam
             'daily_times.*.end_time' => 'required|date_format:H:i|after:daily_times.*.start_time', // Validasi format jam dan setelah start_time
+        ],[
+            'tanggal_pinjam.required' => 'Tanggal Peminjaman Awal wajib diisi.',
+            'tanggal_pinjam.date' => 'Format Tanggal Peminjaman Awal tidak valid.',
+            
+            'tanggal_kembali.required' => 'Tanggal Peminjaman Akhir wajib diisi.',
+            'tanggal_kembali.date' => 'Format Tanggal Peminjaman Akhir tidak valid.',
+            'tanggal_kembali.after_or_equal' => 'Tanggal Peminjaman Akhir harus sama atau setelah Tanggal Peminjaman Awal.',
+            
+            'nama_acara.required' => 'Nama Acara wajib diisi.',
+            'nama_acara.string' => 'Nama Acara harus berupa teks.',
+            'nama_acara.max' => 'Nama Acara tidak boleh lebih dari :max karakter.',
+            
+            'lokasi_acara.required' => 'Lokasi Acara wajib diisi.',
+            'lokasi_acara.string' => 'Lokasi Acara harus berupa teks.',
+            'lokasi_acara.max' => 'Lokasi Acara tidak boleh lebih dari :max karakter.',
+            
+            'barang_id.*.required' => 'Barang yang ingin dipinjam wajib dipilih.',
+            'barang_id.*.exists' => 'Barang yang dipilih tidak valid.',
+            
+            'jumlah.*.required' => 'Jumlah barang wajib diisi.',
+            'jumlah.*.integer' => 'Jumlah barang harus berupa angka.',
+            'jumlah.*.min' => 'Jumlah barang minimal :min.',
+            
+            'daily_times.required' => 'Jadwal jam peminjaman per hari wajib diisi.',
+            'daily_times.array' => 'Format jadwal jam tidak valid.',
+            
+            'daily_times.*.start_time.required' => 'Jam awal untuk setiap hari wajib diisi.',
+            'daily_times.*.start_time.date_format' => 'Format jam awal untuk setiap hari tidak valid (HH:MM).',
+            
+            'daily_times.*.end_time.required' => 'Jam akhir untuk setiap hari wajib diisi.',
+            'daily_times.*.end_time.date_format' => 'Format jam akhir untuk setiap hari tidak valid (HH:MM).',
+            'daily_times.*.end_time.after' => 'Jam akhir untuk setiap hari harus setelah jam awal.',
         ]);
 
         $peminjaman = PeminjamanNew::create([

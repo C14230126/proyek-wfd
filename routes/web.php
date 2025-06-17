@@ -37,10 +37,10 @@ Route::middleware('auth')->group(function () {
     // ✅ Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    Route::get('/listusers', [UserController::class, 'index'])->name('listusers.index');
 
     // ✅ Routes untuk role admin dan mahasiswa
     Route::middleware('role:admin')->group(function () {
-        Route::get('/listusers', [UserController::class, 'index'])->name('listusers.index');
         Route::get('/pengajuan', [PengajuanController::class, 'index'])->name('pengajuan');
     });
 

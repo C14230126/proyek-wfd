@@ -47,8 +47,10 @@
           <a href="{{ route('home') }}" class="text-gray-700 hover:text-black">Beranda</a>
           <a href="{{ route('listpeminjaman.index') }}" class="text-gray-700 hover:text-black">List Peminjaman</a>
           <a href="{{ route('listbarang.index') }}" class="text-gray-700 hover:text-black">List Barang</a>
-          <a href="{{ route('listusers.index') }}" class="text-gray-700 hover:text-black">List Users</a>
-          <a href="{{ route('pengajuan') }}" class="text-gray-700 hover:text-black">Pengajuan</a>
+          @if (Auth::check() && Auth::user()->isAdmin())
+            <a href="{{ route('listusers.index') }}" class="text-gray-700 hover:text-black">List Users</a>
+            <a href="{{ route('pengajuan') }}" class="text-gray-700 hover:text-black">Pengajuan</a>
+          @endif
         @endif
       </div>
     </nav>
