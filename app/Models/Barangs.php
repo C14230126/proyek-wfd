@@ -29,7 +29,7 @@ class Barangs extends Model
      */
     public function peminjamans()
     {
-        return $this->belongsToMany(Peminjaman::class, 'peminjaman_new_details')
+        return $this->belongsToMany(PeminjamanNew::class, 'peminjaman_new_details')
                     ->withPivot('jumlah')
                     ->withTimestamps();
     }
