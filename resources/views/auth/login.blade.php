@@ -16,6 +16,19 @@
         });
     </script>
     @endif
+
+    @if (session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: '{{ session('error') }}',
+                showConfirmButton: true,
+            });
+        });
+    </script>
+    @endif
     
   <form method="POST" action="{{ route('login.post') }}" class="backdrop-blur-sm bg-white/90 rounded-2xl shadow-lg p-12 w-full max-w-2xl mt-10 min-h-[500px] flex flex-col justify-center">
     @csrf
