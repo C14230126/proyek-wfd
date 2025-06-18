@@ -22,7 +22,7 @@ class BarangController extends Controller
     {
         $validated = $request->validate([
             'item' => 'required|string',
-            'jumlah_unit' => 'required|integer|min:1',
+            'jumlah_unit' => 'required|integer|min:0',
             'lokasi' => 'required|string',
             'kategori_id' => 'required|exists:kategori,id',
         ]);
