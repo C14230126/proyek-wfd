@@ -15,7 +15,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed; /* ✅ KUNCI: agar gambar tetap diam */
+    background-attachment: fixed;
   }
 </style>
 
