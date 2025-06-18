@@ -40,4 +40,19 @@ class PengajuanController extends Controller
         return view('pengajuandetail', compact('pengajuan'));
     }
 
+    public function finish($id)
+    {
+        $pengajuan = \App\Models\PeminjamanNew::findOrFail($id);
+
+        if ($pengajuan->status !== 'disetujui') {
+            return back()->with('error', 'Pengajuan bukan dalam status disetujui.');
+        }
+
+        $pengajuan->status = 'selesai';
+        $pengajuan->save();
+
+        return redirect()->route('pengajuan.show', $id)->with('success', 'Peminjaman berhasil ditandai sebagai selesai.');
+    }
+
+
 }

@@ -53,7 +53,8 @@
             <p class="mt-4"><span class="font-medium text-gray-700">Status Pengajuan:</span>
                 <span class="px-3 py-1 rounded-full text-xs font-semibold
                     {{ $pengajuan->status === 'disetujui' ? 'bg-green-100 text-green-800' :
-                       ($pengajuan->status === 'ditolak' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                    ($pengajuan->status === 'selesai' ? 'bg-emerald-100 text-emerald-800' :
+                    ($pengajuan->status === 'ditolak' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800')) }}">
                     {{ ucfirst($pengajuan->status) }}
                 </span>
             </p>
@@ -80,6 +81,39 @@
                         @endforeach
                     </tbody>
                 </table>
+                @if(auth()->check() && auth()->user()->role && auth()->user()->role->role === 'admin' && $pengajuan->status === 'disetujui')
+                <form method="POST" action="{{ route('pengajuan.finish', $pengajuan->id) }}" class="no-alert" x-data="{ returned: [] }">
+                    @csrf
+                    <table class="mt-4 w-full text-sm">
+                        <thead>
+                            <tr class="text-left text-xs text-gray-500 uppercase">
+                                <th class="px-2 py-1">Barang</th>
+                                <th class="px-2 py-1">Jumlah</th>
+                                <th class="px-2 py-1">Dikembalikan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($pengajuan->details as $detail)
+                            <tr class="bg-white border-t">
+                                <td class="px-2 py-1">{{ $detail->barang->item }}</td>
+                                <td class="px-2 py-1">{{ $detail->jumlah }}</td>
+                                <td class="px-2 py-1">
+                                    <input type="checkbox" :value="{{ $detail->id }}" x-model="returned">
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
+                    <div class="text-right mt-4">
+                        <button type="submit"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full shadow disabled:opacity-50"
+                                :disabled="returned.length !== {{ count($pengajuan->details) }}">
+                            Selesai
+                        </button>
+                    </div>
+                </form>
+                @endif
             </div>
 
             {{-- Action buttons for admin --}}
@@ -108,7 +142,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('form[method="POST"]').forEach(form => {
+    document.querySelectorAll('form[method="POST"]:not(.no-alert)').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const action = this.action.includes('approve') ? 'menyetujui' : 'menolak';
@@ -129,4 +163,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
 @endsection

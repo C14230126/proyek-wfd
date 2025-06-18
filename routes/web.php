@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/pengajuan/{id}', [PengajuanController::class, 'show'])->name('pengajuan.show');
         Route::post('/pengajuan/{id}/approve', [PengajuanController::class, 'approve'])->name('pengajuan.approve');
         Route::post('/pengajuan/{id}/decline', [PengajuanController::class, 'decline'])->name('pengajuan.decline');
+        Route::post('/pengajuan/{id}/finish', [PengajuanController::class, 'finish'])->name('pengajuan.finish');
     });
 
 
