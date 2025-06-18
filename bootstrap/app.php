@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\CheckRoleMiddleware::class,
         ]);
     })
+    ->withCommands([
+        \App\Console\Commands\UpdatePeminjamanStatus::class,
+    ])
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (NotFoundHttpException $e, $request) {
             // Periksa jika permintaan adalah API (misalnya, dari JavaScript frontend)

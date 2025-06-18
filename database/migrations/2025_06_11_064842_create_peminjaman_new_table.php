@@ -18,7 +18,7 @@ return new class extends Migration
         $table->string('lokasi_acara');
         $table->date('tanggal_pinjam');
         $table->date('tanggal_kembali');
-        $table->enum('status', ['menunggu', 'disetujui', 'ditolak', 'selesai'])->default('menunggu');
+        $table->enum('status', ['menunggu', 'disetujui', 'ditolak', 'selesai', 'processing'])->default('menunggu');
         $table->timestamps();
 
         $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

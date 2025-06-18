@@ -40,6 +40,8 @@
 
                         // Cek apakah tanggal ini memiliki peminjaman
                         $hasPeminjaman = isset($datesWithPeminjaman[$tanggal]);
+                        $hasProcess = isset($datesWithProcessing[$tanggal]);
+
 
                         // Tentukan apakah tombol harus di-gray out
                         $isPastDay = \Carbon\Carbon::parse($tanggal)->lt(\Carbon\Carbon::today());
@@ -49,9 +51,13 @@
                         // JIKA ANDA HANYA INGIN MAHASISWA TIDAK BISA KLIK HARI LALU
                         // Jika Anda ingin disabled HANYA jika hari sudah lewat DAN user adalah Mahasiswa:
                         $loggedInUser = auth()->user();
-                        if ($isPastDay && $loggedInUser && $loggedInUser->isMahasiswa()) {
+                        if($isPastDay && isset($datesWithUnreturned[$tanggal]) && $loggedInUser->isAdmin()) { // Jika hari sudah lewat dan tidak ada peminjaman yang belum dikembalikan
+                            $buttonClasses .= ' bg-gray-200 text-gray-400';
+                        } else if ($isPastDay && $loggedInUser->isMahasiswa()) {
                             $isDisabled = true;
                             $buttonClasses .= ' bg-gray-200 text-gray-400 cursor-not-allowed';
+                        }else if ($isPastDay) {
+                            $buttonClasses .= ' bg-gray-200 text-gray-400';
                         } else if (!$isPastDay) { // Pastikan untuk hari ini/mendatang, tombol tetap aktif
                             $buttonClasses .= ' hover:bg-blue-100 transition';
                         }
@@ -64,6 +70,10 @@
                         @if ($hasPeminjaman && !$isPastDay)
                             <span class="absolute bottom-1 right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"
                                   title="Ada peminjaman pada tanggal ini"></span>
+                        @endif
+                        @if ($hasProcess)
+                            <span class="absolute bottom-1 right-1 w-2 h-2 bg-amber-300 rounded-full animate-pulse"
+                                  title="Peminjaman pada tanggal ini dalam process"></span>
                         @endif
                         @if ($hasPeminjaman && $isPastDay && isset($datesWithUnreturned[$tanggal]) && $datesWithUnreturned[$tanggal]) {{-- Tampilkan indikator merah jika sudah lewat dan ada yang belum dikembalikan --}}
                             <span class="absolute bottom-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-ping"
@@ -110,14 +120,16 @@ function loadJadwal(tanggal) {
                     <tbody>
             `;
 
-            if (data.length === 0) {
+            const filteredData = data.filter(item => item.status !== 'menunggu');
+
+            if (filteredData.length === 0) {
                 html += `
                     <tr>
                         <td colspan="4" class="px-4 py-3 text-center text-gray-500">Tidak ada peminjaman untuk tanggal ini.</td>
                     </tr>
                 `;
             } else {
-                data.forEach(item => {
+                filteredData.forEach(item => {
                     const waktuPinjam = `${item.awal_jam_pinjam_harian ?? ''} - ${item.akhir_jam_pinjam_harian ?? ''}`;
                     
                     let barangListHtml = '';

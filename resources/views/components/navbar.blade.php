@@ -41,7 +41,7 @@
 
     <nav class="absolute bottom-[-40px] left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-md px-8 py-4 w-full max-w-[1200px] z-10">
       <div class="flex justify-between items-center text-base font-medium w-full">
-        @if ($currentRoute === 'listpeminjaman.index')
+        @if ($currentRoute === 'listpeminjaman.index' && Auth::check() && Auth::user()->isMahasiswa())
           <a href="{{ route('home') }}" class="text-gray-700 hover:text-black">Beranda</a>
           <a href="{{ route('listpeminjaman.index') }}" class="text-gray-700 hover:text-black">List Peminjaman</a>
           <a href="{{ route('listpeminjaman.create')}}" class="text-gray-700 hover:text-black">Buat Peminjaman</a>

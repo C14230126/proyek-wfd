@@ -37,8 +37,32 @@ class PeminjamanNewSeeder extends Seeder
         ]);
 
         // Contoh 2: Peminjaman beberapa hari
-        $tanggalPinjam2 = Carbon::parse('2025-06-16');
-        $tanggalKembali2 = Carbon::parse('2025-06-18');
+        $tanggalPinjam2 = Carbon::parse('2025-06-18');
+        $tanggalKembali2 = Carbon::parse('2025-06-20');
+        $dailyTimes2 = [];
+        $currentDate = $tanggalPinjam2->copy();
+        while ($currentDate->lte($tanggalKembali2)) {
+            $dateString = $currentDate->format('Y-m-d');
+            $dailyTimes2[$dateString] = [
+                'start_time' => '16:00',
+                'end_time' => '20:00'
+            ];
+            $currentDate->addDay();
+        }
+
+        PeminjamanNew::create([
+            'user_id' => 4,
+            'nama_acara' => 'Pertemuan Komunitas Teknologi',
+            'lokasi_acara' => 'Gedung P Auditorium',
+            'tanggal_pinjam' => $tanggalPinjam2,
+            'tanggal_kembali' => $tanggalKembali2,
+            'status' => 'processing',
+            'daily_times' => $dailyTimes2,
+        ]);
+
+        // Contoh 2: Peminjaman beberapa hari
+        $tanggalPinjam2 = Carbon::parse('2025-06-23');
+        $tanggalKembali2 = Carbon::parse('2025-06-26');
         $dailyTimes2 = [];
         $currentDate = $tanggalPinjam2->copy();
         while ($currentDate->lte($tanggalKembali2)) {
@@ -62,8 +86,8 @@ class PeminjamanNewSeeder extends Seeder
 
 
         // Contoh 2: Peminjaman beberapa hari
-        $tanggalPinjam2 = Carbon::parse('2025-06-16');
-        $tanggalKembali2 = Carbon::parse('2025-06-18');
+        $tanggalPinjam2 = Carbon::parse('2025-06-24');
+        $tanggalKembali2 = Carbon::parse('2025-06-25');
         $dailyTimes2 = [];
         $currentDate = $tanggalPinjam2->copy();
         while ($currentDate->lte($tanggalKembali2)) {

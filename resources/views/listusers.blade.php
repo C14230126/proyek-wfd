@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 
-<div class="w-[1200px] mx-auto bg-white rounded-3xl shadow-md p-6 mt-16 mb-8">
+<div class="w-[1200px] mx-auto bg-white rounded-3xl shadow-md p-6 mt-16 mb-8 relative">
     <h2 class="text-2xl font-bold mb-4">Users</h2>
 
     <div class="space-y-3">
@@ -9,26 +9,32 @@
         <div class="flex justify-between items-center bg-gray-200 px-4 py-3 rounded-2xl">
             <span class="font-semibold text-xl">{{ $user->name }}</span>
 
-                    @if($user->status === 'Waiting')
-                        <div class="flex items-center space-x-2 text-sm text-gray-600 bg-white rounded-full px-3 py-1">
-                            <span>Waiting</span>
-                        </div>
-                    @else
-                        <form id="delete-user-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}" method="POST" style="display: none;">
-                            @csrf
-                            @method('DELETE')
-                        </form>
-                        <button type="button"
-                                data-user-id="{{ $user->id }}"
-                                data-user-name="{{ $user->name }}"
-                                onclick="confirmDelete(this)"
-                                class="flex items-center space-x-2 text-sm text-red-600 bg-white rounded-full px-3 py-1 hover:bg-red-100 transition">
-                            <span>Hapus</span>
-                        </button>
-                   
-                </div>
-              @endif
+            @if($user->status === 'Waiting')
+            <div class="flex items-center space-x-2 text-sm text-gray-600 bg-white rounded-full px-3 py-1">
+                <span>Waiting</span>
+            </div>
+            @else
+            <form id="delete-user-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}" method="POST"
+                style="display: none;">
+                @csrf
+                @method('DELETE')
+            </form>
+            <button type="button" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
+                onclick="confirmDelete(this)"
+                class="flex items-center space-x-2 text-sm text-red-600 bg-white rounded-full px-3 py-1 hover:bg-red-100 transition">
+                <span>Hapus</span>
+            </button>
+
+            @endif
+        </div>
         @endforeach
+
+        <div class="flex justify-end mt-4"> {{-- Added mt-4 for some top margin --}}
+            <button id="openApprovalModalBtn"
+                class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full shadow-lg z-50">
+                <i class="fas fa-user-plus mr-2"></i> Pengguna Baru
+            </button>
+        </div>
     </div>
 
     <div id="userApprovalModal"
@@ -54,11 +60,6 @@
             </div>
         </div>
     </div>
-
-    <button id="openApprovalModalBtn"
-        class="fixed bottom-4 right-4 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full shadow-lg z-50">
-        <i class="fas fa-user-plus mr-2"></i> Pengguna Baru
-    </button>
 </div>
 
 <script>

@@ -27,12 +27,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/peminjaman', [PeminjamanNewController::class, 'index'])->name('listpeminjaman.index');
     Route::get('/peminjaman/{id}/detail', [PeminjamanNewDetailController::class, 'index'])->name('peminjaman.detail');
     Route::post('/peminjaman/{id}/detail', [PeminjamanNewDetailController::class, 'store'])->name('peminjaman.detail.store');
+    Route::put('/peminjaman/{id}/detail/processing', [PeminjamanNewDetailController::class, 'update'])->name('peminjaman.detail.update');
     Route::get('/peminjaman/jadwal/{tanggal}', [PeminjamanNewController::class, 'getJadwalByTanggal']);
 
     // Barang dan lainnya
     Route::get('/listbarang', [BarangController::class, 'index'])->name('listbarang.index');
     Route::post('/listbarang', [BarangController::class, 'store'])->name('listbarang.store');
-    Route::put('/listbarang/{id}', [BarangController::class, 'update'])->name('listbarang.update');
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
