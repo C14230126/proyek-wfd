@@ -44,7 +44,7 @@
 
                 <div>
                     <label class="block text-sm font-semibold">Jumlah Unit</label>
-                    <input type="number" name="jumlah_unit" x-model="selectedJumlah" min="1" class="w-full px-4 py-2 rounded bg-gray-100 border" required>
+                    <input type="number" name="jumlah_unit" x-model="selectedJumlah" min="0" class="w-full px-4 py-2 rounded bg-gray-100 border" required>
                 </div>
 
                 <div class="flex justify-end gap-2 mt-4">
