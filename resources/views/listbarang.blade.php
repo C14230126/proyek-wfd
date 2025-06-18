@@ -12,15 +12,21 @@
             </div>
         @endforeach
 
+        @php
+            $isMahasiswa = strtolower(Auth::user()->role->role) === 'mahasiswa';
+        @endphp
+
         <div class="flex justify-end mt-4 gap-2">
-            <button @click="openEditModal = true"
-                class="bg-white border border-black rounded px-4 py-2 text-sm hover:bg-blue-600 hover:text-white transition">
-                Edit Barang
-            </button>
-            <button @click="openAddModal = true"
-                class="bg-white border-2 border-black rounded-full w-10 h-10 flex items-center justify-center text-2xl hover:bg-black hover:text-white transition">
-                +
-            </button>
+            @unless($isMahasiswa)
+                <button @click="openEditModal = true"
+                    class="bg-white border border-black rounded px-4 py-2 text-sm hover:bg-blue-600 hover:text-white transition">
+                    Edit Barang
+                </button>
+                <button @click="openAddModal = true"
+                    class="bg-white border-2 border-black rounded-full w-10 h-10 flex items-center justify-center text-2xl hover:bg-black hover:text-white transition">
+                    +
+                </button>
+            @endunless
         </div>
     </div>
 
@@ -67,7 +73,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold">Jumlah Unit</label>
-                    <input type="number" name="jumlah_unit" class="w-full px-4 py-2 rounded bg-gray-100" required>
+                    <input type="number" name="jumlah_unit" min="0" class="w-full px-4 py-2 rounded bg-gray-100" required>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold">Lokasi</label>

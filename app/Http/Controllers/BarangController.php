@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Barangs;
 use App\Models\Kategori;
@@ -18,8 +19,12 @@ class BarangController extends Controller
         return view('listbarang', compact('barangs', 'kategoris'));
     }
 
-    public function store(Request $request)
+        public function store(Request $request)
     {
+        if (Auth::user()->role->role === 'mahasiswa') {
+            abort(403, 'Mahasiswa tidak diizinkan menambah barang.');
+        }
+
         $validated = $request->validate([
             'item' => 'required|string',
             'jumlah_unit' => 'required|integer|min:0',
@@ -31,10 +36,11 @@ class BarangController extends Controller
 
         return redirect()->route('listbarang.index')->with('success', 'Barang berhasil ditambahkan.');
     }
+
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'jumlah_unit' => 'required|integer|min:1',
+            'jumlah_unit' => 'required|integer|min:0',
         ]);
 
         $barang = \App\Models\Barangs::findOrFail($id);
