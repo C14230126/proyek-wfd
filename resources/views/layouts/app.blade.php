@@ -18,7 +18,6 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-   {{-- ✅ PASTIKAN BARIS INI ADA DI DALAM TAG <head> --}}
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <style>
