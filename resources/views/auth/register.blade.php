@@ -26,14 +26,15 @@
                 <label for="nrp" class="block font-semibold text-gray-700 mb-1">NRP</label>
                 <input type="text" id="nrp" name="nrp" class="w-full px-4 py-3 rounded-2xl bg-gray-100 focus:outline-none" placeholder="Cxxxxxxx" value="{{ old('nrp') }}">
                 @error('nrp')
-                    <p class="text-red-500 text-xs italic mt-1">{{ $message }}</p>
+                    <p class="text-red-500 text-xs italic mt-1" id="nrp-laravel-error">{{ $message }}</p>
                 @enderror
+                <p id="nrp-error-message" class="text-red-500 text-xs italic mt-1 hidden">NRP tidak valid.</p>
             </div>
 
             <div>
                 <label for="jurusan" class="block font-semibold text-gray-700 mb-1">Jurusan</label>
                 <input type="text" id="jurusan" name="jurusan" class="w-full px-4 py-3 rounded-2xl bg-gray-100 focus:outline-none" value="{{ old('jurusan', '') }}" readonly>
-                <p class="text-xs text-gray-500 mt-1">*Note: Jurusan akan terisi otomatis berdasarkan NRP</p>
+                <p id="jurusan-note" class="text-xs text-gray-500 mt-1">Note: Jurusan akan terisi otomatis berdasarkan NRP</p>
             </div>
 
             <div>
@@ -77,42 +78,83 @@
     document.addEventListener('DOMContentLoaded', function() {
         const nrpInput = document.getElementById('nrp');
         const jurusanInput = document.getElementById('jurusan');
+        const nrpErrorMessage = document.getElementById('nrp-error-message');
+        const nrpLaravelError = document.getElementById('nrp-laravel-error');
+
+        if (nrpInput && nrpErrorMessage) {
+            nrpErrorMessage.classList.add('hidden');
+            if (nrpLaravelError) {
+                nrpErrorMessage.classList.add('hidden');
+            } else {
+                const nrpValueOnLoad = nrpInput.value.trim().toUpperCase();
+                const nrpRegex = /^[A-H]\d+$/;
+
+                if (nrpValueOnLoad.length > 0 && !nrpRegex.test(nrpValueOnLoad)) {
+                    nrpErrorMessage.classList.remove('hidden');
+                }
+            }
+        }
 
         if (nrpInput && jurusanInput) {
             nrpInput.addEventListener('input', function() {
                 const nrpValue = this.value.trim().toUpperCase();
                 let jurusan = '';
+                let isValidNRPFormat = true;
 
-                if (nrpValue.length >= 1) {
-                    const firstChar = nrpValue.substring(0, 1);
+                const nrpRegex = /^[A-H]\d+$/;
 
-                    switch (firstChar) {
-                        case 'A':
-                        case 'E':
-                        case 'F':
-                            jurusan = 'Humaniora dan Industri Kreatif';
-                            break;
-                        case 'B':
-                            jurusan = 'Teknik Sipil & Perencanaan';
-                            break;
-                        case 'C':
-                            jurusan = 'Teknologi Industri';
-                            break;
-                        case 'D':
-                            jurusan = 'School of Business and Management';
-                            break;
-                        case 'G':
-                            jurusan = 'Ilmu Pendidikan';
-                            break;
-                        case 'H':
-                            jurusan = 'Humaniora dan Industri Kreatif';
-                            break;
-                        default:
-                            jurusan = 'Tidak Dikenal';
-                    }
+                if (nrpLaravelError) {
+                    nrpLaravelError.classList.add('hidden');
                 }
+
+                if (nrpValue.length > 0) {
+                    if (nrpRegex.test(nrpValue)) {
+                        const firstChar = nrpValue.substring(0, 1);
+                        switch (firstChar) {
+                            case 'A':
+                            case 'E':
+                            case 'F':
+                            case 'H':
+                                jurusan = 'Humaniora dan Industri Kreatif';
+                                break;
+                            case 'B':
+                                jurusan = 'Teknik Sipil & Perencanaan';
+                                break;
+                            case 'C':
+                                jurusan = 'Teknologi Industri';
+                                break;
+                            case 'D':
+                                jurusan = 'School of Business and Management';
+                                break;
+                            case 'G':
+                                jurusan = 'Ilmu Pendidikan';
+                                break;
+                            default:
+                                jurusan = '';
+                                isValidNRPFormat = false;
+                                break;
+                        }
+                    } else {
+                        jurusan = '';
+                        isValidNRPFormat = false;
+                    }
+                } else {
+                    jurusan = ''; 
+                    isValidNRPFormat = true; 
+                }
+
                 jurusanInput.value = jurusan;
+
+                if (!isValidNRPFormat && nrpValue.length > 0) {
+                    nrpErrorMessage.classList.remove('hidden');
+                } else {
+                    nrpErrorMessage.classList.add('hidden');
+                }
             });
+            
+            if (nrpInput.value) {
+                nrpInput.dispatchEvent(new Event('input'));
+            }
         }
     });
 </script>
