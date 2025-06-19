@@ -9,7 +9,6 @@
         <h2 class="text-2xl font-bold text-[#193048] mb-6">Form Peminjaman</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <!-- Kiri -->
             <div class="space-y-4">
                 <div>
                     <label for="nama_acara" class="block text-sm font-semibold text-gray-700 mb-1">Nama Acara</label>
@@ -33,19 +32,15 @@
                 </div>
             </div>
 
-            <!-- Tengah -->
             <div class="space-y-4">
-                <!-- Removed global jam pinjam inputs as they will be per-day -->
                 <div class="space-y-4" id="daily-schedule-container">
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Jadwal Peminjaman Per Hari</label>
                     <div id="daily-time-inputs">
-                        {{-- Dynamic daily time inputs will be rendered here by JavaScript --}}
                         <p class="text-gray-500 text-sm">Pilih rentang tanggal untuk mengatur jam pinjam per hari.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Kanan: Tabel Barang -->
             <div class="col-span-1 md:col-span-1">
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Barang yang ingin dipinjam</label>
 
@@ -60,7 +55,6 @@
                             </tr>
                         </thead>
                         <tbody id="barang-list">
-                            {{-- At least one row should be present initially --}}
                             <tr>
                                 <td class="border p-1">
                                     <select name="barang_id[]" required class="w-full bg-white rounded px-2 py-1 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
@@ -71,10 +65,8 @@
                                 </td>
                                 <td class="border p-1">
                                     <input type="number" name="jumlah[]" required min="1" max="5" value="1" class="w-full px-2 py-1 rounded bg-gray-100 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                                    {{-- <input type="number" name="jumlah[]" required min="1" value="1" class="w-full px-2 py-1 rounded bg-gray-100 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"> --}}
                                 </td>
                                 <td class="border p-1 text-center">
-                                    {{-- The initial row also gets a remove button --}}
                                     <button type="button" onclick="removeBarang(this)" class="text-red-600 hover:text-red-800 text-base font-semibold px-2 py-1 rounded-full leading-none">
                                         &times;
                                     </button>
@@ -90,7 +82,6 @@
             </div>
         </div>
 
-        <!-- Tombol -->
         <div class="flex justify-end gap-4 mt-4">
             <a href="{{ route('home') }}" class="px-6 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors">Batal</a>
             <button type="submit" class="px-6 py-2 bg-[#3B9BC8] text-white rounded-full hover:bg-[#338AB0] transition-colors">Simpan</button>
@@ -100,82 +91,70 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    // Function to add a new barang row
-function tambahBarang() {
-    const barangList = document.getElementById('barang-list');
-    const newRow = document.createElement('tr');
+    function tambahBarang() {
+        const barangList = document.getElementById('barang-list');
+        const newRow = document.createElement('tr');
 
-    // Populate the inner HTML of the new row
-    newRow.innerHTML = `
-        <td class="border p-1">
-            <select name="barang_id[]" required class="w-full bg-white rounded px-2 py-1 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                @foreach ($barangs as $barang)
-                    <option value="{{ $barang->id }}">{{ $barang->item }}</option>
-                @endforeach
-            </select>
-        </td>
-        <td class="border p-1">
-            <input type="number" name="jumlah[]" required min="1" max="5" value="1" class="w-full px-2 py-1 rounded bg-gray-100 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-        </td>
-        <td class="border p-1 text-center">
-            <button type="button" onclick="removeBarang(this)" class="text-red-600 hover:text-red-800 text-base font-semibold px-2 py-1 rounded-full leading-none">
-                &times;
-            </button>
-        </td>
-    `;
-    barangList.appendChild(newRow); // Append the new row to the table body
-}
-    // Function to add a new barang row
-    // function tambahBarang() {
-    //     const barangList = document.getElementById('barang-list');
-    //     const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td class="border p-1">
+                <select name="barang_id[]" required class="w-full bg-white rounded px-2 py-1 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    @foreach ($barangs as $barang)
+                        <option value="{{ $barang->id }}">{{ $barang->item }}</option>
+                    @endforeach
+                </select>
+            </td>
+            <td class="border p-1">
+                <input type="number" name="jumlah[]" required min="1" max="5" value="1" class="w-full px-2 py-1 rounded bg-gray-100 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            </td>
+            <td class="border p-1 text-center">
+                <button type="button" onclick="removeBarang(this)" class="text-red-600 hover:text-red-800 text-base font-semibold px-2 py-1 rounded-full leading-none">
+                    &times;
+                </button>
+            </td>
+        `;
+        barangList.appendChild(newRow);
+    }
 
-    //     // Populate the inner HTML of the new row
-    //     newRow.innerHTML = `
-    //         <td class="border p-1">
-    //             <select name="barang_id[]" required class="w-full bg-white rounded px-2 py-1 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-    //                 @foreach ($barangs as $barang)
-    //                     <option value="{{ $barang->id }}">{{ $barang->item }}</option>
-    //                 @endforeach
-    //             </select>
-    //         </td>
-    //         <td class="border p-1">
-    //             <input type="number" name="jumlah[]" required min="1" value="1" class="w-full px-2 py-1 rounded bg-gray-100 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-    //         </td>
-    //         <td class="border p-1 text-center">
-    //             <button type="button" onclick="removeBarang(this)" class="text-red-600 hover:text-red-800 text-base font-semibold px-2 py-1 rounded-full leading-none">
-    //                 &times;
-    //             </button>
-    //         </td>
-    //     `;
-    //     barangList.appendChild(newRow); // Append the new row to the table body
-    // }
-
-    // Function to remove a barang row
     function removeBarang(buttonElement) {
-        // Get the parent <tr> element of the clicked button
         const rowToRemove = buttonElement.closest('tr');
         if (rowToRemove) {
-            // Ensure there's always at least one row, or handle empty table gracefully
             const barangList = document.getElementById('barang-list');
-            if (barangList.children.length > 1) { // Only remove if more than one row exists
+            if (barangList.children.length > 1) {
                 rowToRemove.remove();
             } else {
-                console.log("Cannot remove the last item. At least one item is required.");
+                console.log("Tidak bisa menghapus item terakhir. Minimal satu item diperlukan.");
             }
         }
     }
 
-    // --- Start: New JavaScript for Daily Schedule Generation ---
     const tanggalPinjamInput = document.getElementById('tanggal_pinjam');
     const tanggalKembaliInput = document.getElementById('tanggal_kembali');
     const dailyTimeInputsContainer = document.getElementById('daily-time-inputs');
+    const form = document.querySelector('form'); 
+
+    function validateTimeInputs(startTimeInput, endTimeInput, errorElement) {
+        const startTime = startTimeInput.value;
+        const endTime = endTimeInput.value;
+
+        if (startTime && endTime) {
+            if (startTime >= endTime) {
+                errorElement.textContent = 'Jam akhir harus setelah jam awal.';
+                errorElement.classList.remove('hidden');
+                return false;
+            } else {
+                errorElement.classList.add('hidden');
+                return true;
+            }
+        }
+        errorElement.classList.add('hidden'); 
+        return true;
+    }
 
     function generateDailySchedule() {
         const startDate = tanggalPinjamInput.value;
         const endDate = tanggalKembaliInput.value;
 
-        dailyTimeInputsContainer.innerHTML = ''; // Clear previous inputs
+        dailyTimeInputsContainer.innerHTML = ''; 
 
         if (!startDate || !endDate) {
             dailyTimeInputsContainer.innerHTML = '<p class="text-gray-500 text-sm">Pilih rentang tanggal untuk mengatur jam pinjam per hari.</p>';
@@ -194,7 +173,7 @@ function tambahBarang() {
         let htmlContent = '';
 
         while (currentDate <= end) {
-            const dateString = currentDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
+            const dateString = currentDate.toISOString().split('T')[0]; 
             const readableDate = currentDate.toLocaleDateString('id-ID', {
                 weekday: 'long',
                 year: 'numeric',
@@ -217,22 +196,69 @@ function tambahBarang() {
                                 class="w-full px-3 py-1 rounded bg-white border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                         </div>
                     </div>
+                    <p id="time-error-${dateString}" class="text-red-500 text-xs italic mt-1 hidden"></p>
                 </div>
             `;
-            currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+            currentDate.setDate(currentDate.getDate() + 1); 
         }
         dailyTimeInputsContainer.innerHTML = htmlContent;
+        let tempDate = new Date(start);
+        while (tempDate <= end) {
+            const dateString = tempDate.toISOString().split('T')[0];
+            const startTimeInput = document.getElementById(`awal_jam_${dateString}`);
+            const endTimeInput = document.getElementById(`akhir_jam_${dateString}`);
+            const errorElement = document.getElementById(`time-error-${dateString}`);
+
+            if (startTimeInput && endTimeInput && errorElement) {
+                const validate = () => validateTimeInputs(startTimeInput, endTimeInput, errorElement);
+                startTimeInput.addEventListener('change', validate);
+                endTimeInput.addEventListener('change', validate);
+                validate();
+            }
+            tempDate.setDate(tempDate.getDate() + 1);
+        }
     }
 
-    // Event listeners for date changes
     tanggalPinjamInput.addEventListener('change', generateDailySchedule);
     tanggalKembaliInput.addEventListener('change', generateDailySchedule);
 
-    // Initial call to generate schedule if dates are pre-filled (e.g., old() values)
-    document.addEventListener('DOMContentLoaded', function() {
-        generateDailySchedule(); // Generate schedule on page load
+    form.addEventListener('submit', function(event) {
+        let allTimesValid = true;
+        const timeErrorElements = dailyTimeInputsContainer.querySelectorAll('[id^="time-error-"]');
+        timeErrorElements.forEach(errorEl => {
+            if (!errorEl.classList.contains('hidden')) {
+                allTimesValid = false;
+            }
+        });
 
-        // Apply consistent styling for existing inputs/selects (moved here for better DOMContentLoaded handling)
+        let tempDate = new Date(tanggalPinjamInput.value);
+        const endDate = new Date(tanggalKembaliInput.value);
+        while (tempDate <= endDate) {
+            const dateString = tempDate.toISOString().split('T')[0];
+            const startTimeInput = document.getElementById(`awal_jam_${dateString}`);
+            const endTimeInput = document.getElementById(`akhir_jam_${dateString}`);
+            const errorElement = document.getElementById(`time-error-${dateString}`);
+            if (startTimeInput && endTimeInput && errorElement) {
+                if (!validateTimeInputs(startTimeInput, endTimeInput, errorElement)) {
+                    allTimesValid = false;
+                }
+            }
+            tempDate.setDate(tempDate.getDate() + 1);
+        }
+
+        if (!allTimesValid) {
+            event.preventDefault(); 
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal!',
+                text: 'Periksa kembali jam pinjam Anda. Jam akhir harus setelah jam awal untuk setiap hari.',
+                confirmButtonText: 'Oke'
+            });
+        }
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        generateDailySchedule(); 
+
         const inputsAndSelects = document.querySelectorAll('input:not([type="date"]):not([type="time"]), select');
         inputsAndSelects.forEach(el => {
             if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
@@ -241,44 +267,65 @@ function tambahBarang() {
                 }
             }
         });
-        // Specific styling for date/time inputs
         document.querySelectorAll('input[type="date"], input[type="time"]').forEach(input => {
             input.classList.add('border', 'border-gray-300', 'focus:border-blue-500', 'focus:ring-1', 'focus:ring-blue-500');
         });
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-    // Pastikan elemen ada
-    const tanggalPinjam = document.getElementById('tanggal_pinjam');
-    if (!tanggalPinjam) return;
+        const tanggalPinjam = document.getElementById('tanggal_pinjam');
+        const tanggalKembali = document.getElementById('tanggal_kembali'); 
+        if (!tanggalPinjam || !tanggalKembali) return;
 
-    const today = new Date();
-    const todayString = today.toISOString().split('T')[0];
-    
-    // Set min date
-    tanggalPinjam.min = todayString;
-    
-    tanggalPinjam.addEventListener('change', function() {
-        const selectedDate = new Date(this.value);
         const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        if (selectedDate < today) {
-            // Gunakan Swal.fire bukan SweetAlert
-            Swal.fire({
-                icon: 'error',
-                title: 'Tanggal tidak valid',
-                text: 'Anda tidak bisa memilih tanggal yang sudah lewat',
-                confirmButtonText: 'Mengerti'
-            }).then(() => {
-                // Reset nilai setelah alert ditutup
-                this.value = todayString;
-            });
-        }
+        const todayString = today.toISOString().split('T')[0];
+
+        tanggalPinjam.min = todayString;
+
+        tanggalPinjam.addEventListener('change', function() {
+            const selectedPinjamDate = new Date(this.value);
+            const todayReset = new Date();
+            todayReset.setHours(0, 0, 0, 0);
+
+            if (selectedPinjamDate < todayReset) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Tanggal tidak valid',
+                    text: 'Anda tidak bisa memilih tanggal yang sudah lewat',
+                    confirmButtonText: 'Mengerti'
+                }).then(() => {
+                    this.value = todayString;
+                    generateDailySchedule();
+                });
+            }
+
+            tanggalKembali.min = this.value;
+            if (tanggalKembali.value && new Date(tanggalKembali.value) < selectedPinjamDate) {
+                tanggalKembali.value = this.value;
+            }
+            generateDailySchedule();
+        });
+
+        tanggalKembali.addEventListener('change', function() {
+            const selectedKembaliDate = new Date(this.value);
+            const selectedPinjamDate = new Date(tanggalPinjam.value);
+
+            if (selectedKembaliDate < selectedPinjamDate) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Tanggal tidak valid',
+                    text: 'Tanggal akhir tidak bisa sebelum tanggal awal.',
+                    confirmButtonText: 'Mengerti'
+                }).then(() => {
+                    this.value = tanggalPinjam.value; 
+                    generateDailySchedule();
+                });
+            }
+            generateDailySchedule(); 
+        });
     });
-});
-document.addEventListener('DOMContentLoaded', function() {
-        // Cek jika ada pesan 'success' dari session
+
+    document.addEventListener('DOMContentLoaded', function() {
         const successMessage = '{{ session('success') }}';
         if (successMessage) {
             Swal.fire({
@@ -289,7 +336,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Cek jika ada pesan 'error' dari session
         const errorMessage = '{{ session('error') }}';
         if (errorMessage) {
             Swal.fire({
@@ -300,18 +346,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Cek jika ada pesan 'stock_error' dari session
         const stockErrorMessage = '{{ session('stock_error') }}';
         if (stockErrorMessage) {
             Swal.fire({
-                icon: 'warning', // Atau 'error', 'info'
+                icon: 'warning', 
                 title: 'Stok Tidak Cukup!',
                 text: stockErrorMessage,
                 confirmButtonText: 'Mengerti'
             });
         }
-
-        // ... (kode JavaScript lainnya seperti validasi tanggal pinjam) ...
     });
 </script>
 @endsection
