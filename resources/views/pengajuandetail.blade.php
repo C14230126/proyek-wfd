@@ -98,7 +98,7 @@
                                 <td class="px-2 py-1">{{ $detail->barang->item }}</td>
                                 <td class="px-2 py-1">{{ $detail->jumlah }}</td>
                                 <td class="px-2 py-1">
-                                    <input type="checkbox" :value="{{ $detail->id }}" x-model="returned">
+                                    <input type="checkbox" :value="{{ $detail->id }}" name="returned[]" x-model="returned">
                                 </td>
                             </tr>
                             @endforeach
