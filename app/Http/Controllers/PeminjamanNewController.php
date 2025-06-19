@@ -9,7 +9,8 @@ use Illuminate\Routing\Controller;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\DB;
+use App\Models\Barangs; 
 
 class PeminjamanNewController extends Controller
 {
@@ -96,75 +97,119 @@ class PeminjamanNewController extends Controller
         $barangs = \App\Models\Barangs::all();
         return view('buatpeminjaman', compact('barangs'));
     }
-
-    public function store(Request $request)
+public function store(Request $request)
     {
+        // 1. Validasi Input Dasar
         $request->validate([
             'tanggal_pinjam' => 'required|date',
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
             'nama_acara' => 'required|string|max:255',
             'lokasi_acara' => 'required|string|max:255',
             'barang_id.*' => 'required|exists:barangs,id',
-            'jumlah.*' => 'required|integer|min:1',
-            // Validasi untuk daily_times yang sekarang dikirim dari form
-            'daily_times' => 'required|array', // Pastikan daily_times adalah array
-            'daily_times.*.start_time' => 'required|date_format:H:i', // Validasi format jam
-            'daily_times.*.end_time' => 'required|date_format:H:i|after:daily_times.*.start_time', // Validasi format jam dan setelah start_time
+            'jumlah.*' => 'required|integer|min:1|max:5', // Batas maksimal 5 unit per barang
+            'daily_times' => 'required|array',
+            'daily_times.*.start_time' => 'required|date_format:H:i',
+            'daily_times.*.end_time' => 'required|date_format:H:i|after:daily_times.*.start_time',
         ], [
             'tanggal_pinjam.required' => 'Tanggal Peminjaman Awal wajib diisi.',
             'tanggal_pinjam.date' => 'Format Tanggal Peminjaman Awal tidak valid.',
-
             'tanggal_kembali.required' => 'Tanggal Peminjaman Akhir wajib diisi.',
             'tanggal_kembali.date' => 'Format Tanggal Peminjaman Akhir tidak valid.',
             'tanggal_kembali.after_or_equal' => 'Tanggal Peminjaman Akhir harus sama atau setelah Tanggal Peminjaman Awal.',
-
             'nama_acara.required' => 'Nama Acara wajib diisi.',
             'nama_acara.string' => 'Nama Acara harus berupa teks.',
             'nama_acara.max' => 'Nama Acara tidak boleh lebih dari :max karakter.',
-
             'lokasi_acara.required' => 'Lokasi Acara wajib diisi.',
             'lokasi_acara.string' => 'Lokasi Acara harus berupa teks.',
             'lokasi_acara.max' => 'Lokasi Acara tidak boleh lebih dari :max karakter.',
-
             'barang_id.*.required' => 'Barang yang ingin dipinjam wajib dipilih.',
             'barang_id.*.exists' => 'Barang yang dipilih tidak valid.',
-
             'jumlah.*.required' => 'Jumlah barang wajib diisi.',
             'jumlah.*.integer' => 'Jumlah barang harus berupa angka.',
             'jumlah.*.min' => 'Jumlah barang minimal :min.',
-
+            'jumlah.*.max' => 'Jumlah barang maksimal adalah 5 unit.', // Pesan error untuk batas 5 unit
             'daily_times.required' => 'Jadwal jam peminjaman per hari wajib diisi.',
             'daily_times.array' => 'Format jadwal jam tidak valid.',
-
             'daily_times.*.start_time.required' => 'Jam awal untuk setiap hari wajib diisi.',
             'daily_times.*.start_time.date_format' => 'Format jam awal untuk setiap hari tidak valid (HH:MM).',
-
             'daily_times.*.end_time.required' => 'Jam akhir untuk setiap hari wajib diisi.',
             'daily_times.*.end_time.date_format' => 'Format jam akhir untuk setiap hari tidak valid (HH:MM).',
             'daily_times.*.end_time.after' => 'Jam akhir untuk setiap hari harus setelah jam awal.',
         ]);
 
-        $peminjaman = PeminjamanNew::create([
-            'user_id' => Auth::id(),
-            'tanggal_pinjam' => $request->tanggal_pinjam,
-            'tanggal_kembali' => $request->tanggal_kembali,
-            'nama_acara' => $request->nama_acara,
-            'lokasi_acara' => $request->lokasi_acara,
-            'status' => 'menunggu',
-            'daily_times' => $request->daily_times, // ✅ Ini sudah benar jika di-cast di model
-        ]);
+        // 2. Validasi Ketersediaan Stok Barang Secara Kustom
+        $barangIds = $request->input('barang_id');
+        $jumlahDiminta = $request->input('jumlah');
 
-        foreach ($request->barang_id as $index => $barangId) {
-            PeminjamanNewDetail::create([
-                'peminjaman_new_id' => $peminjaman->id,
-                'barang_id' => $barangId,
-                'jumlah' => $request->jumlah[$index],
-            ]);
+        // Mengumpulkan barang-barang untuk pengecekan stok
+        $itemsToCheck = [];
+        foreach ($barangIds as $index => $barangId) {
+            $itemsToCheck[$barangId] = ($itemsToCheck[$barangId] ?? 0) + $jumlahDiminta[$index];
         }
 
-        return redirect()->back()->with('success', 'Peminjaman berhasil disimpan!');
-    }
+        foreach ($itemsToCheck as $barangId => $totalDiminta) {
+            $barang = Barangs::find($barangId);
 
+            if (!$barang) {
+                return redirect()->back()->withInput()->with('stock_error', 'Salah satu barang yang Anda minta tidak ditemukan.');
+            }
+
+            if ($barang->jumlah_unit < $totalDiminta) {
+                return redirect()->back()->withInput()->with('stock_error', 'Maaf, stok ' . $barang->item . ' tidak mencukupi. Tersedia: ' . $barang->jumlah_unit . ', Diminta: ' . $totalDiminta . '.');
+            }
+        }
+
+        // 3. Mulai Transaksi Database
+        DB::beginTransaction();
+
+        try {
+            // 4. Buat entri Peminjaman Baru
+            $peminjaman = PeminjamanNew::create([
+                'user_id' => Auth::id(),
+                'tanggal_pinjam' => $request->tanggal_pinjam,
+                'tanggal_kembali' => $request->tanggal_kembali,
+                'nama_acara' => $request->nama_acara,
+                'lokasi_acara' => $request->lokasi_acara,
+                'status' => 'menunggu', // Status awal pengajuan peminjaman
+                'daily_times' => $request->daily_times,
+            ]);
+
+            // 5. Simpan detail peminjaman dan kurangi stok barang
+            foreach ($request->barang_id as $index => $barangId) {
+                $jumlah = $request->jumlah[$index]; // Jumlah yang diminta pengguna
+
+                // Buat detail peminjaman
+                PeminjamanNewDetail::create([
+                    'peminjaman_new_id' => $peminjaman->id,
+                    'barang_id' => $barangId,
+                    'jumlah' => $jumlah,
+                ]);
+
+                // Kurangi stok barang dari database
+                // Mengambil ulang barang dalam transaksi untuk memastikan data terbaru
+                $barang = Barangs::find($barangId);
+                $barang->jumlah_unit -= $jumlah;
+                $barang->save();
+            }
+
+            // 6. Komit transaksi jika semua operasi berhasil
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Peminjaman berhasil diajukan dan stok barang telah diperbarui!');
+
+        } catch (\Exception $e) {
+            // 7. Rollback transaksi jika terjadi kesalahan
+            DB::rollBack();
+            Log::error('Error saat menyimpan peminjaman atau mengurangi stok:', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat mengajukan peminjaman. Mohon coba lagi. ' . $e->getMessage());
+        }
+    }
     public function update($id, $action)
     {
         try {

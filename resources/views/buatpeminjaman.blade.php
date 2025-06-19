@@ -70,7 +70,8 @@
                                     </select>
                                 </td>
                                 <td class="border p-1">
-                                    <input type="number" name="jumlah[]" required min="1" value="1" class="w-full px-2 py-1 rounded bg-gray-100 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                    <input type="number" name="jumlah[]" required min="1" max="5" value="1" class="w-full px-2 py-1 rounded bg-gray-100 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                    {{-- <input type="number" name="jumlah[]" required min="1" value="1" class="w-full px-2 py-1 rounded bg-gray-100 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"> --}}
                                 </td>
                                 <td class="border p-1 text-center">
                                     {{-- The initial row also gets a remove button --}}
@@ -96,33 +97,59 @@
         </div>
     </form>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     // Function to add a new barang row
-    function tambahBarang() {
-        const barangList = document.getElementById('barang-list');
-        const newRow = document.createElement('tr');
+function tambahBarang() {
+    const barangList = document.getElementById('barang-list');
+    const newRow = document.createElement('tr');
 
-        // Populate the inner HTML of the new row
-        newRow.innerHTML = `
-            <td class="border p-1">
-                <select name="barang_id[]" required class="w-full bg-white rounded px-2 py-1 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                    @foreach ($barangs as $barang)
-                        <option value="{{ $barang->id }}">{{ $barang->item }}</option>
-                    @endforeach
-                </select>
-            </td>
-            <td class="border p-1">
-                <input type="number" name="jumlah[]" required min="1" value="1" class="w-full px-2 py-1 rounded bg-gray-100 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-            </td>
-            <td class="border p-1 text-center">
-                <button type="button" onclick="removeBarang(this)" class="text-red-600 hover:text-red-800 text-base font-semibold px-2 py-1 rounded-full leading-none">
-                    &times;
-                </button>
-            </td>
-        `;
-        barangList.appendChild(newRow); // Append the new row to the table body
-    }
+    // Populate the inner HTML of the new row
+    newRow.innerHTML = `
+        <td class="border p-1">
+            <select name="barang_id[]" required class="w-full bg-white rounded px-2 py-1 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                @foreach ($barangs as $barang)
+                    <option value="{{ $barang->id }}">{{ $barang->item }}</option>
+                @endforeach
+            </select>
+        </td>
+        <td class="border p-1">
+            <input type="number" name="jumlah[]" required min="1" max="5" value="1" class="w-full px-2 py-1 rounded bg-gray-100 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+        </td>
+        <td class="border p-1 text-center">
+            <button type="button" onclick="removeBarang(this)" class="text-red-600 hover:text-red-800 text-base font-semibold px-2 py-1 rounded-full leading-none">
+                &times;
+            </button>
+        </td>
+    `;
+    barangList.appendChild(newRow); // Append the new row to the table body
+}
+    // Function to add a new barang row
+    // function tambahBarang() {
+    //     const barangList = document.getElementById('barang-list');
+    //     const newRow = document.createElement('tr');
+
+    //     // Populate the inner HTML of the new row
+    //     newRow.innerHTML = `
+    //         <td class="border p-1">
+    //             <select name="barang_id[]" required class="w-full bg-white rounded px-2 py-1 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+    //                 @foreach ($barangs as $barang)
+    //                     <option value="{{ $barang->id }}">{{ $barang->item }}</option>
+    //                 @endforeach
+    //             </select>
+    //         </td>
+    //         <td class="border p-1">
+    //             <input type="number" name="jumlah[]" required min="1" value="1" class="w-full px-2 py-1 rounded bg-gray-100 border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+    //         </td>
+    //         <td class="border p-1 text-center">
+    //             <button type="button" onclick="removeBarang(this)" class="text-red-600 hover:text-red-800 text-base font-semibold px-2 py-1 rounded-full leading-none">
+    //                 &times;
+    //             </button>
+    //         </td>
+    //     `;
+    //     barangList.appendChild(newRow); // Append the new row to the table body
+    // }
 
     // Function to remove a barang row
     function removeBarang(buttonElement) {
@@ -250,5 +277,41 @@
         }
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+        // Cek jika ada pesan 'success' dari session
+        const successMessage = '{{ session('success') }}';
+        if (successMessage) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: successMessage,
+                confirmButtonText: 'Oke'
+            });
+        }
+
+        // Cek jika ada pesan 'error' dari session
+        const errorMessage = '{{ session('error') }}';
+        if (errorMessage) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Terjadi Kesalahan!',
+                text: errorMessage,
+                confirmButtonText: 'Oke'
+            });
+        }
+
+        // Cek jika ada pesan 'stock_error' dari session
+        const stockErrorMessage = '{{ session('stock_error') }}';
+        if (stockErrorMessage) {
+            Swal.fire({
+                icon: 'warning', // Atau 'error', 'info'
+                title: 'Stok Tidak Cukup!',
+                text: stockErrorMessage,
+                confirmButtonText: 'Mengerti'
+            });
+        }
+
+        // ... (kode JavaScript lainnya seperti validasi tanggal pinjam) ...
+    });
 </script>
 @endsection
