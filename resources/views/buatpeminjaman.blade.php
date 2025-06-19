@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="min-h-screen flex justify-center items-center px-4">
+<div class="min-h-screen flex justify-center items-center px-4 mt-12 mb-8">
     <form action="{{ route('listpeminjaman.store') }}" method="POST"
         class="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8 w-full max-w-5xl">
         @csrf
@@ -254,15 +254,15 @@ function tambahBarang() {
 
     const today = new Date();
     const todayString = today.toISOString().split('T')[0];
-    
+
     // Set min date
     tanggalPinjam.min = todayString;
-    
+
     tanggalPinjam.addEventListener('change', function() {
         const selectedDate = new Date(this.value);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        
+
         if (selectedDate < today) {
             // Gunakan Swal.fire bukan SweetAlert
             Swal.fire({
