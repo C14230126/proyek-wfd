@@ -44,7 +44,6 @@
             <div class="col-span-1 md:col-span-1">
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Barang yang ingin dipinjam</label>
 
-                {{-- Scrollable container for the table --}}
                 <div class="overflow-y-auto max-h-56 border border-gray-300 rounded">
                     <table class="w-full text-sm">
                         <thead>
@@ -162,6 +161,9 @@
 
         const start = new Date(startDate);
         const end = new Date(endDate);
+        
+        start.setMinutes(start.getMinutes() + start.getTimezoneOffset());
+        end.setMinutes(end.getMinutes() + end.getTimezoneOffset());
 
         if (start > end) {
             dailyTimeInputsContainer.innerHTML = '<p class="text-red-500 text-sm">Tanggal awal tidak boleh setelah tanggal akhir.</p>';
@@ -170,51 +172,62 @@
 
         let currentDate = new Date(start);
         let htmlContent = '';
+        let hasValidDays = false;
 
         while (currentDate <= end) {
-            const dateString = currentDate.toISOString().split('T')[0]; 
-            const readableDate = currentDate.toLocaleDateString('id-ID', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
+            if (currentDate.getDay() !== 0) {
+                hasValidDays = true;
+                const dateString = currentDate.toISOString().split('T')[0]; 
+                const readableDate = currentDate.toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
 
-            htmlContent += `
-                <div class="bg-gray-50 p-3 rounded-md border border-gray-200 shadow-sm mb-3">
-                    <p class="text-sm font-semibold text-gray-800 mb-2">${readableDate}</p>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="awal_jam_${dateString}" class="block text-xs font-medium text-gray-600 mb-1">Awal Jam Pinjam</label>
-                            <input type="time" id="awal_jam_${dateString}" name="daily_times[${dateString}][start_time]" required
-                                class="w-full px-3 py-1 rounded bg-white border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                htmlContent += `
+                    <div class="bg-gray-50 p-3 rounded-md border border-gray-200 shadow-sm mb-3">
+                        <p class="text-sm font-semibold text-gray-800 mb-2">${readableDate}</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="awal_jam_${dateString}" class="block text-xs font-medium text-gray-600 mb-1">Awal Jam Pinjam</label>
+                                <input type="time" id="awal_jam_${dateString}" name="daily_times[${dateString}][start_time]" required
+                                    class="w-full px-3 py-1 rounded bg-white border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label for="akhir_jam_${dateString}" class="block text-xs font-medium text-gray-600 mb-1">Akhir Jam Pinjam</label>
+                                <input type="time" id="akhir_jam_${dateString}" name="daily_times[${dateString}][end_time]" required
+                                    class="w-full px-3 py-1 rounded bg-white border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            </div>
                         </div>
-                        <div>
-                            <label for="akhir_jam_${dateString}" class="block text-xs font-medium text-gray-600 mb-1">Akhir Jam Pinjam</label>
-                            <input type="time" id="akhir_jam_${dateString}" name="daily_times[${dateString}][end_time]" required
-                                class="w-full px-3 py-1 rounded bg-white border border-gray-300 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                        </div>
+                        <p id="time-error-${dateString}" class="text-red-500 text-xs italic mt-1 hidden"></p>
                     </div>
-                    <p id="time-error-${dateString}" class="text-red-500 text-xs italic mt-1 hidden"></p>
-                </div>
-            `;
+                `;
+            }
             currentDate.setDate(currentDate.getDate() + 1); 
         }
-        dailyTimeInputsContainer.innerHTML = htmlContent;
-        let tempDate = new Date(start);
-        while (tempDate <= end) {
-            const dateString = tempDate.toISOString().split('T')[0];
-            const startTimeInput = document.getElementById(`awal_jam_${dateString}`);
-            const endTimeInput = document.getElementById(`akhir_jam_${dateString}`);
-            const errorElement = document.getElementById(`time-error-${dateString}`);
 
-            if (startTimeInput && endTimeInput && errorElement) {
-                const validate = () => validateTimeInputs(startTimeInput, endTimeInput, errorElement);
-                startTimeInput.addEventListener('change', validate);
-                endTimeInput.addEventListener('change', validate);
-                validate();
+        if (!hasValidDays) {
+            dailyTimeInputsContainer.innerHTML = '<p class="text-yellow-600 text-sm">Tidak ada hari yang valid untuk peminjaman dalam rentang yang dipilih (tidak termasuk hari Minggu).</p>';
+        } else {
+            dailyTimeInputsContainer.innerHTML = htmlContent;
+            let tempDate = new Date(start);
+            while (tempDate <= end) {
+                 if (tempDate.getDay() !== 0) { 
+                    const dateString = tempDate.toISOString().split('T')[0];
+                    const startTimeInput = document.getElementById(`awal_jam_${dateString}`);
+                    const endTimeInput = document.getElementById(`akhir_jam_${dateString}`);
+                    const errorElement = document.getElementById(`time-error-${dateString}`);
+
+                    if (startTimeInput && endTimeInput && errorElement) {
+                        const validate = () => validateTimeInputs(startTimeInput, endTimeInput, errorElement);
+                        startTimeInput.addEventListener('change', validate);
+                        endTimeInput.addEventListener('change', validate);
+                        validate();
+                    }
+                }
+                tempDate.setDate(tempDate.getDate() + 1);
             }
-            tempDate.setDate(tempDate.getDate() + 1);
         }
     }
 
@@ -232,14 +245,19 @@
 
         let tempDate = new Date(tanggalPinjamInput.value);
         const endDate = new Date(tanggalKembaliInput.value);
+        tempDate.setMinutes(tempDate.getMinutes() + tempDate.getTimezoneOffset());
+        endDate.setMinutes(endDate.getMinutes() + endDate.getTimezoneOffset());
+        
         while (tempDate <= endDate) {
-            const dateString = tempDate.toISOString().split('T')[0];
-            const startTimeInput = document.getElementById(`awal_jam_${dateString}`);
-            const endTimeInput = document.getElementById(`akhir_jam_${dateString}`);
-            const errorElement = document.getElementById(`time-error-${dateString}`);
-            if (startTimeInput && endTimeInput && errorElement) {
-                if (!validateTimeInputs(startTimeInput, endTimeInput, errorElement)) {
-                    allTimesValid = false;
+            if (tempDate.getDay() !== 0) {
+                const dateString = tempDate.toISOString().split('T')[0];
+                const startTimeInput = document.getElementById(`awal_jam_${dateString}`);
+                const endTimeInput = document.getElementById(`akhir_jam_${dateString}`);
+                const errorElement = document.getElementById(`time-error-${dateString}`);
+                if (startTimeInput && endTimeInput && errorElement) {
+                    if (!validateTimeInputs(startTimeInput, endTimeInput, errorElement)) {
+                        allTimesValid = false;
+                    }
                 }
             }
             tempDate.setDate(tempDate.getDate() + 1);
@@ -281,47 +299,62 @@
 
         tanggalPinjam.min = todayString;
 
-        tanggalPinjam.addEventListener('change', function() {
-            const selectedPinjamDate = new Date(this.value);
-            const todayReset = new Date();
-            todayReset.setHours(0, 0, 0, 0);
-
-            if (selectedPinjamDate < todayReset) {
+        const handleDateChange = (event) => {
+            const input = event.target;
+            const selectedDate = new Date(input.value);
+            selectedDate.setMinutes(selectedDate.getMinutes() + selectedDate.getTimezoneOffset());
+            
+            if (selectedDate.getDay() === 0) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Tanggal tidak valid',
-                    text: 'Anda tidak bisa memilih tanggal yang sudah lewat',
+                    title: 'Peminjaman Tidak Tersedia',
+                    text: 'Maaf, peminjaman tidak dapat dilakukan pada hari Minggu.',
                     confirmButtonText: 'Mengerti'
                 }).then(() => {
-                    this.value = todayString;
+                    input.value = ''; 
                     generateDailySchedule();
                 });
+                return; 
             }
 
-            tanggalKembali.min = this.value;
-            if (tanggalKembali.value && new Date(tanggalKembali.value) < selectedPinjamDate) {
-                tanggalKembali.value = this.value;
+            if (input.id === 'tanggal_pinjam') {
+                const todayReset = new Date();
+                todayReset.setHours(0, 0, 0, 0);
+                
+                if (selectedDate < todayReset) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Tanggal tidak valid',
+                        text: 'Anda tidak bisa memilih tanggal yang sudah lewat',
+                        confirmButtonText: 'Mengerti'
+                    }).then(() => {
+                        this.value = todayString;
+                        generateDailySchedule();
+                    });
+                }
+                tanggalKembali.min = input.value;
+                if (tanggalKembali.value && new Date(tanggalKembali.value) < selectedDate) {
+                    tanggalKembali.value = input.value;
+                }
+            } else { 
+                const selectedPinjamDate = new Date(tanggalPinjam.value);
+                if (selectedDate < selectedPinjamDate) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Tanggal tidak valid',
+                        text: 'Tanggal akhir tidak bisa sebelum tanggal awal.',
+                        confirmButtonText: 'Mengerti'
+                    }).then(() => {
+                        input.value = tanggalPinjam.value; 
+                        generateDailySchedule();
+                    });
+                }
             }
             generateDailySchedule();
-        });
+        };
 
-        tanggalKembali.addEventListener('change', function() {
-            const selectedKembaliDate = new Date(this.value);
-            const selectedPinjamDate = new Date(tanggalPinjam.value);
-
-            if (selectedKembaliDate < selectedPinjamDate) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Tanggal tidak valid',
-                    text: 'Tanggal akhir tidak bisa sebelum tanggal awal.',
-                    confirmButtonText: 'Mengerti'
-                }).then(() => {
-                    this.value = tanggalPinjam.value; 
-                    generateDailySchedule();
-                });
-            }
-            generateDailySchedule(); 
-        });
+        tanggalPinjam.addEventListener('change', handleDateChange);
+        tanggalKembali.addEventListener('change', handleDateChange);
     });
 
     document.addEventListener('DOMContentLoaded', function() {
